@@ -1,0 +1,6 @@
+{
+  "name": "tuesday-doubles-ladder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tennis doubles ladder — Vercel backend + live ladder, backed by Airtable."
+}
