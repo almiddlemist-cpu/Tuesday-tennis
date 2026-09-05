@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>This week's results · Tuesday Doubles</title>
+<style>
+  :root{
+    --blue:#144da0; --blue-hi:#2f6ac2; --blue-dk:#0e3673;
+    --yellow:#f2e916; --yellow-dk:#cbb800; --red:#cf4457;
+    --bg:#f2f5fa; --card:#fff; --ink:#16213d; --muted:#5b647a;
+    --line:#e5e9f1; --line-dk:#ccd5e4;
+    --mono:ui-monospace,'SF Mono','Cascadia Mono',Menlo,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);padding-bottom:60px}
+  header{background:var(--blue);color:#fff;padding:18px 22px 16px}
+  .wrap{max-width:620px;margin:0 auto;padding:0 22px}
+  .head-row{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:13px}
+  .logo{background:#fff;border-radius:10px;padding:5px 9px;display:inline-flex;align-items:center;line-height:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .logo img{height:34px;display:block}
+  h1{margin:0;font-size:20px;letter-spacing:-.3px;font-weight:700}
+  .wk{font-family:var(--mono);font-size:13px;color:var(--yellow);margin-top:2px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:20px}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .winner{background:var(--blue);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px}
+  .winner .lbl{font-size:13px;color:var(--yellow);letter-spacing:.3px}
+  .winner .nm{font-size:22px;font-weight:700;letter-spacing:-.3px}
+  .winner .g{font-family:var(--mono);font-size:13px;color:rgba(255,255,255,.8)}
+  .row{display:grid;grid-template-columns:46px 1fr 74px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .row.head{font-size:13px;color:var(--muted);background:#f7f9fc}
+  .rank{font-family:var(--mono);font-weight:700;color:var(--muted)}
+  .rank.one{color:var(--blue)}
+  .nm{font-weight:600}
+  .g{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:700}
+  .top{background:rgba(242,233,22,.13)}
+  .note{font-size:13px;color:var(--muted);margin:16px 2px 0;text-align:center}
+  .loading{color:var(--muted);padding:40px 0;text-align:center}
+  svg{flex-shrink:0}
+</style>
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <span class="logo"><img src="data:image/webp;base64,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" alt="Maidstone Tennis Academy"/></span>
+      <div><h1>This week's results</h1><div class="wk" id="wk"></div></div>
+    </div>
+  </header>
+  <main class="wrap" id="app"><div class="loading">Loading results…</div></main>
+
+<script>
+const esc=(s)=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function trophy(){return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z" fill="#f2e916" stroke="#f2e916" stroke-width="1.2" stroke-linejoin="round"/><path d="M6 5H4a2 2 0 0 0 0 4h2.5M18 5h2a2 2 0 0 1 0 4h-2.5" stroke="#f2e916" stroke-width="1.4" stroke-linecap="round"/><path d="M9.5 13.5 9 17h6l-.5-3.5M8 20h8M12 17v3" stroke="#f2e916" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
+
+async function load(){
+  const app=document.getElementById('app');
+  let data;
+  try{ data=await (await fetch('/api/results')).json(); }
+  catch(e){ app.innerHTML='<div class="note">Couldn’t load results. Try refreshing.</div>'; return; }
+
+  if(data.setup){ app.innerHTML='<div class="note">Not set up yet.</div>'; return; }
+  if(!data.ok){ app.innerHTML='<div class="note">Error: '+esc(data.error||'unknown')+'</div>'; return; }
+  if(data.noResults){ document.getElementById('wk').textContent=''; 
+    app.innerHTML='<div class="note">This week’s results will appear here after Tuesday’s games.</div>'; return; }
+
+  document.getElementById('wk').textContent='Week '+data.week;
+  const winners=data.winnerNames||[];
+  const topGames=data.results[0].games;
+
+  let html='<div class="card">';
+  // winner banner
+  html+='<div class="winner">'+trophy()+'<div>'
+    +'<div class="lbl">'+(data.tiebreak?'Tiebreak — to be played off':'Winner of the night')+'</div>'
+    +'<div class="nm">'+esc(winners.join(data.tiebreak?'  vs  ':' & '))+'</div>'
+    +'<div class="g">'+topGames+' games won</div></div></div>';
+  // table
+  html+='<div class="row head"><span>#</span><span>Player</span><span class="g">Games</span></div>';
+  data.results.forEach((r,i)=>{
+    const isTop=r.games===topGames;
+    html+='<div class="row'+(isTop?' top':'')+'">'
+      +'<span class="rank'+(i===0?' one':'')+'">'+(i+1)+'</span>'
+      +'<span class="nm">'+esc(r.name)+'</span>'
+      +'<span class="g">'+r.games+'</span></div>';
+  });
+  html+='</div>';
+  html+='<div class="note">Games won across the night. Fresh each Tuesday.</div>';
+  app.innerHTML=html;
+}
+load();
+</script>
+</body>
+</html>
