@@ -120,7 +120,8 @@ function computeNight(players, payload) {
   });
   const newRank = {}; [...updated].sort((a, b) => b.r - a.r).forEach((p, i) => (newRank[p.id] = i));
   updated.forEach(p => (p.rankAfter = newRank[p.id] + 1));
-  return { updated, winnerIds, isTie, topGames, podium };
+  const ranking = nightRows.map(r => ({ id: r.id, games: r.games }));
+  return { updated, winnerIds, isTie, topGames, podium, ranking };
 }
 
 export default async function handler(req, res) {
@@ -138,27 +139,24 @@ export default async function handler(req, res) {
     const nameById = {}; players.forEach(p => (nameById[p.id] = p.name));
     const out = computeNight(players, { rounds, blend });
     const playedIds = out.updated.filter(p => p.played).map(p => p.id);
+
+    // compact games-won summary for the public results page (name + games only)
+    const resultsSummary = out.ranking.map(r => ({ n: nameById[r.id] || "\u2014", g: r.games }));
+
     const [session] = await createRecords(TABLES.sessions, [{
       Label: `Week ${week}`, Date: date || undefined, Week: week, Mode: mode, Status: "Completed",
       "Winner Games": out.topGames, Tiebreak: out.isTie, Winner: out.winnerIds, "Available Players": playedIds,
+      Results: JSON.stringify(resultsSummary),
     }]);
     const sessionId = session.id;
-    const matchRecs = [];
-    rounds.forEach((rd, ri) => rd.courts.forEach((ct, ci) => {
-      if (ct.ga === "" || ct.gb === "" || ct.ga == null || ct.gb == null) return;
-      matchRecs.push({ Label: `W${week} R${ri + 1} C${ci + 1}`, Round: ri + 1, Court: ci + 1,
-        "Games A": +ct.ga, "Games B": +ct.gb, "Team A": ct.a, "Team B": ct.b, Session: [sessionId] });
-    }));
-    if (matchRecs.length) await createRecords(TABLES.matches, matchRecs);
+
+    // update player ratings + stats (in place; no per-match or history rows written)
     const playerUpdates = out.updated.filter(p => p.played).map(p => ({
       id: p.id, fields: { Rating: Math.round(p.r), RD: Math.round(p.rd), Volatility: +p.sigma.toFixed(3),
         Played: p.played_total, Wins: p.wins, Draws: p.draws, Losses: p.losses,
         "Games For": p.gf, "Games Against": p.ga, "Night Wins": p.nightWins } }));
     if (playerUpdates.length) await updateRecords(TABLES.players, playerUpdates);
-    const historyRecs = out.updated.filter(p => p.played).map(p => ({
-      Label: `${nameById[p.id]} \u00b7 Week ${week}`, "Rating After": Math.round(p.r), "RD After": Math.round(p.rd),
-      "Rating Change": +p.change.toFixed(1), "Rank After": p.rankAfter, Player: [p.id], Session: [sessionId] }));
-    if (historyRecs.length) await createRecords(TABLES.history, historyRecs);
+
     res.status(200).json({ ok: true, sessionId, result: {
       winnerIds: out.winnerIds, winnerNames: out.winnerIds.map(id => nameById[id] || "\u2014"),
       games: out.topGames, tie: out.isTie,
