@@ -3,129 +3,118 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tuesday Doubles Ladder</title>
+<title>Tuesday Doubles Ladder · Maidstone Tennis Academy</title>
 <style>
   :root{
-    --court:#123d2b; --court-hi:#1b5e3f; --ball:#cde94a; --ball-dk:#a9c832;
-    --clay:#c1654a; --bg:#f3f5f2; --card:#fff; --ink:#18241d; --muted:#5f6f66;
-    --line:#e3e9e4; --line-dk:#cdd6cf;
+    --blue:#144da0; --blue-hi:#2f6ac2; --blue-dk:#0e3673;
+    --yellow:#f2e916; --yellow-dk:#cbb800; --red:#cf4457;
+    --bg:#f2f5fa; --card:#fff; --ink:#16213d; --muted:#5b647a;
+    --line:#e5e9f1; --line-dk:#ccd5e4;
     --mono:ui-monospace,'SF Mono','Cascadia Mono',Menlo,monospace;
     --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);padding-bottom:60px}
-  header{background:var(--court);color:#fff;padding:20px 22px 16px}
+  header{background:var(--blue);color:#fff;padding:18px 22px 16px}
   .wrap{max-width:820px;margin:0 auto;padding:0 22px}
-  .head-row{max-width:820px;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-  h1{margin:0;font-size:22px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}
-  .ball{width:22px;height:22px;border-radius:50%;background:var(--ball);box-shadow:inset -3px -3px 0 var(--ball-dk)}
-  .sub{font-family:var(--mono);font-size:13px;color:var(--ball)}
+  .head-row{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:13px}
+  .logo{background:#fff;border-radius:10px;padding:5px 9px;display:inline-flex;align-items:center;line-height:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  .logo img{height:34px;display:block}
+  h1{margin:0;font-size:21px;letter-spacing:-.3px;font-weight:700}
+  .sub{font-family:var(--mono);font-size:13px;color:var(--yellow)}
   h2{font-size:19px;letter-spacing:-.2px;margin:26px 0 4px}
   .note{font-size:13px;color:var(--muted);margin:5px 0 14px;max-width:620px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
   .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
-  .row{display:grid;grid-template-columns:44px 1fr 54px 90px 66px 92px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:44px 1fr 54px 96px 66px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line)}
   .row:last-child{border-bottom:none}
-  .row.head{font-size:13px;color:var(--muted);background:#fafcfa}
-  .top{background:rgba(205,233,74,.08)}
+  .row.head{font-size:13px;color:var(--muted);background:#f7f9fc}
+  .top{background:rgba(242,233,22,.13)}
   .rank{font-family:var(--mono);font-weight:700;color:var(--muted)}
-  .rank.podium{color:var(--court)}
+  .rank.podium{color:var(--blue)}
   .name{display:flex;align-items:center;gap:8px}
   .name b{font-weight:600}
   .c{text-align:center}.r{text-align:right}
-  .pos{color:var(--court-hi)}.neg{color:var(--clay)}
-  .trophy{color:var(--ball-dk);font-size:12px;font-weight:700;display:inline-flex;gap:2px;font-family:var(--mono)}
+  .pos{color:var(--blue-hi)}.neg{color:var(--red)}
+  .trophy{color:var(--yellow-dk);font-size:12px;font-weight:700;display:inline-flex;gap:2px;font-family:var(--mono);align-items:center}
   .honour{display:grid;grid-template-columns:74px 1fr 84px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line)}
   .honour:last-child{border-bottom:none}
   .tag{font-size:12px;color:var(--muted)}
-  .banner{padding:12px 16px;margin-top:16px;border:1px solid var(--ball-dk);background:rgba(205,233,74,.16);border-radius:14px;font-size:13px}
+  .banner{padding:12px 16px;margin-top:16px;border:1px solid var(--yellow-dk);background:rgba(242,233,22,.16);border-radius:14px;font-size:13px}
+  .muted{color:var(--muted)}
+  a{color:var(--blue);font-weight:600}
+  .loading{color:var(--muted);padding:40px 0}
+  .pill{display:inline-block;background:rgba(255,255,255,.16);border-radius:20px;padding:3px 10px;font-size:12px;color:#fff}
   .setup{margin-top:20px}
   .setup ol{line-height:1.7;padding-left:20px}
-  .setup code{background:#eef2ee;border:1px solid var(--line-dk);border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:13px}
-  .muted{color:var(--muted)}
-  a{color:var(--court);font-weight:600}
-  .loading{color:var(--muted);padding:40px 0}
-  .pill{display:inline-block;background:rgba(255,255,255,.14);border-radius:20px;padding:3px 10px;font-size:12px;color:#fff}
+  .setup code{background:#eaf0f8;border:1px solid var(--line-dk);border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:13px}
 </style>
 </head>
 <body>
   <header>
     <div class="head-row">
-      <h1><span class="ball"></span> Tuesday Doubles Ladder</h1>
+      <div class="brand">
+        <span class="logo"><img src="data:image/webp;base64,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" alt="Maidstone Tennis Academy"/></span>
+        <h1>Tuesday Doubles Ladder</h1>
+      </div>
       <span class="sub" id="sub"></span>
     </div>
-    <div class="wrap" style="padding-top:8px"><span class="pill">Live from Airtable</span></div>
+    <div class="wrap" style="padding-top:10px"><span class="pill">Club ladder</span></div>
   </header>
-  <main class="wrap" id="app">
-    <div class="loading">Loading the ladder…</div>
-  </main>
+  <main class="wrap" id="app"><div class="loading">Loading the ladder…</div></main>
 
 <script>
-const $ = (h) => { const d=document.createElement('div'); d.innerHTML=h.trim(); return d.firstChild; };
-const esc = (s)=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-
+const esc=(s)=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 async function load(){
-  const app = document.getElementById('app');
+  const app=document.getElementById('app');
   let data;
-  try { data = await (await fetch('/api/state')).json(); }
-  catch(e){ app.innerHTML = '<div class="banner">Couldn\u2019t reach the server. Try refreshing.</div>'; return; }
-
+  try{ data=await (await fetch('/api/state')).json(); }
+  catch(e){ app.innerHTML='<div class="banner">Couldn’t reach the server. Try refreshing.</div>'; return; }
   if(data.setup){ renderSetup(app); return; }
-  if(!data.ok){ app.innerHTML = '<div class="banner">Error: '+esc(data.error||'unknown')+'</div>'; return; }
+  if(!data.ok){ app.innerHTML='<div class="banner">Error: '+esc(data.error||'unknown')+'</div>'; return; }
 
-  const players = data.players.filter(p=>p.active || p.played>0).sort((a,b)=>b.r-a.r);
-  document.getElementById('sub').textContent = 'Week '+data.week+' \u00b7 '+data.players.filter(p=>p.active).length+' players';
+  const players=data.players.filter(p=>p.active||p.played>0).sort((a,b)=>b.r-a.r);
+  document.getElementById('sub').textContent='Week '+data.week+' · '+data.players.filter(p=>p.active).length+' players';
 
-  const unresolved = (data.nights||[]).filter(n=>n.tiebreak);
-  let html = '';
+  const unresolved=(data.nights||[]).filter(n=>n.tiebreak);
+  let html='';
   if(unresolved.length){
-    html += '<div class="banner"><b>'+(unresolved.length===1?'A night is waiting on a playoff.':unresolved.length+' nights are waiting on a playoff.')+'</b> <span class="muted">Settle it in the app to award the trophy.</span></div>';
+    html+='<div class="banner"><b>'+(unresolved.length===1?'A night is waiting on a playoff.':unresolved.length+' nights are waiting on a playoff.')+'</b> <span class="muted">The coach will settle it.</span></div>';
   }
-
-  html += '<h2>The ladder</h2><div class="note">Ranked by rating. Games \u00b1 is the friendly number; the rating underneath drives the pairings.</div>';
-  html += '<div class="card">';
-  html += '<div class="row head"><span>#</span><span>Player</span><span class="c">P</span><span class="c">W\u00b7D\u00b7L</span><span class="r">Games\u00b1</span><span class="r">Rating</span></div>';
+  html+='<h2>The ladder</h2><div class="note">Standings across the season. Games ± is games won minus games lost.</div>';
+  html+='<div class="card">';
+  html+='<div class="row head"><span>#</span><span>Player</span><span class="c">P</span><span class="c">W · D · L</span><span class="r">Games ±</span></div>';
   players.forEach((p,i)=>{
     const diff=p.gf-p.ga;
-    html += '<div class="row'+(i<3?' top':'')+'">'
-      + '<span class="rank'+(i<3?' podium':'')+'">'+(i+1)+'</span>'
-      + '<span class="name"><b>'+esc(p.name)+'</b>'+(p.nightWins>0?'<span class="trophy">\u25B4 '+p.nightWins+'</span>':'')+'</span>'
-      + '<span class="c num muted">'+p.played+'</span>'
-      + '<span class="c num"><b>'+p.wins+'</b><span class="muted"> \u00b7 '+p.draws+' \u00b7 '+p.losses+'</span></span>'
-      + '<span class="r num '+(diff>0?'pos':diff<0?'neg':'muted')+'" style="font-weight:700">'+(diff>0?'+':'')+diff+'</span>'
-      + '<span class="r num muted">'+Math.round(p.r)+' <span style="font-size:11px">\u00b1'+Math.round(p.rd)+'</span></span>'
-      + '</div>';
+    html+='<div class="row'+(i<3?' top':'')+'">'
+      +'<span class="rank'+(i<3?' podium':'')+'">'+(i+1)+'</span>'
+      +'<span class="name"><b>'+esc(p.name)+'</b>'+(p.nightWins>0?'<span class="trophy">▴ '+p.nightWins+'</span>':'')+'</span>'
+      +'<span class="c num muted">'+p.played+'</span>'
+      +'<span class="c num"><b>'+p.wins+'</b><span class="muted"> · '+p.draws+' · '+p.losses+'</span></span>'
+      +'<span class="r num '+(diff>0?'pos':diff<0?'neg':'muted')+'" style="font-weight:700">'+(diff>0?'+':'')+diff+'</span>'
+      +'</div>';
   });
-  html += '</div>';
+  html+='</div>';
 
-  const nights = (data.nights||[]).filter(n=>n.week>0);
+  const nights=(data.nights||[]).filter(n=>n.week>0);
   if(nights.length){
-    html += '<h2>Night winners</h2><div class="note">Most games won on the night, week by week.</div><div class="card">';
+    html+='<h2>Night winners</h2><div class="note">Most games won on the night, week by week.</div><div class="card">';
     nights.slice(0,8).forEach(n=>{
-      const names = n.winnerNames.join(n.tiebreak?'  vs  ':' & ');
-      html += '<div class="honour"><span class="num tag">Week '+n.week+'</span>'
-        + '<span class="name"><b>'+esc(names)+'</b>'+(n.tiebreak?'<span class="tag">\u00b7 tiebreak, unplayed</span>':'')+'</span>'
-        + '<span class="r num tag">'+n.games+' games</span></div>';
+      const names=n.winnerNames.join(n.tiebreak?'  vs  ':' & ');
+      html+='<div class="honour"><span class="num tag">Week '+n.week+'</span>'
+        +'<span class="name"><b>'+esc(names)+'</b>'+(n.tiebreak?'<span class="tag">· tiebreak</span>':'')+'</span>'
+        +'<span class="r num tag">'+n.games+' games</span></div>';
     });
-    html += '</div>';
+    html+='</div>';
   }
-
-  app.innerHTML = html;
+  app.innerHTML=html;
 }
-
 function renderSetup(app){
-  document.getElementById('sub').textContent = 'Setup needed';
-  app.innerHTML = '<div class="setup"><h2>One step to go live</h2>'
-    + '<div class="note">The app is deployed and the backend is running \u2014 it just needs a key to read your Airtable base. This takes about two minutes and only you can do it (it\u2019s your account\u2019s credential).</div>'
-    + '<div class="card" style="padding:16px 20px"><ol>'
-    + '<li>Open <a href="https://airtable.com/create/tokens" target="_blank" rel="noopener">airtable.com/create/tokens</a> and create a personal access token.</li>'
-    + '<li>Give it the scopes <code>data.records:read</code> and <code>data.records:write</code>, and add access to the <b>Tuesday Doubles Ladder</b> base.</li>'
-    + '<li>In your Vercel project \u2192 Settings \u2192 Environment Variables, add <code>AIRTABLE_TOKEN</code> (the token) and <code>AIRTABLE_BASE_ID</code> = <code>appHS8TotHpCLuRib</code>.</li>'
-    + '<li>Redeploy (Vercel \u2192 Deployments \u2192 latest \u2192 Redeploy), then refresh this page.</li>'
-    + '</ol></div>'
-    + '<div class="note">Once it\u2019s connected, this page shows your live ladder pulled straight from Airtable.</div></div>';
+  document.getElementById('sub').textContent='Setup needed';
+  app.innerHTML='<div class="setup"><h2>One step to go live</h2>'
+    +'<div class="note">The backend is running — it just needs its Airtable environment variables set in Vercel.</div></div>';
 }
-
 load();
 </script>
 </body>
