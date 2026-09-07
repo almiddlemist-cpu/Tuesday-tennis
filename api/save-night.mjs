@@ -144,7 +144,9 @@ export default async function handler(req, res) {
     const resultsSummary = out.ranking.map(r => ({ n: nameById[r.id] || "\u2014", g: r.games }));
 
     const [session] = await createRecords(TABLES.sessions, [{
-      Label: `Week ${week}`, Date: date || undefined, Week: week, Mode: mode, Status: "Completed",
+      Label: `Week ${week}`, Date: date || undefined, Week: week,
+      Mode: ["Balanced", "Competitive", "Social"].includes(mode) ? mode : undefined,
+      Status: "Completed",
       "Winner Games": out.topGames, Tiebreak: out.isTie, Winner: out.winnerIds, "Available Players": playedIds,
       Results: JSON.stringify(resultsSummary),
     }]);
