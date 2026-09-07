@@ -86,9 +86,10 @@ function computeNight(players, payload) {
   const obs = {}; players.forEach(p => (obs[p.id] = []));
   const tally = {};
   const rOf = id => byId[id].r, rdOf = id => byId[id].rd;
-  const teamR = ids => (rOf(ids[0]) + rOf(ids[1])) / 2;
-  const oppR = ids => (rOf(ids[0]) + rOf(ids[1])) / 2;
-  const oppRd = ids => Math.sqrt((rdOf(ids[0]) ** 2 + rdOf(ids[1]) ** 2) / 2);
+  const avgR = ids => ids.reduce((s, id) => s + rOf(id), 0) / ids.length;
+  const teamR = avgR;
+  const oppR = avgR;
+  const oppRd = ids => Math.sqrt(ids.reduce((s, id) => s + rdOf(id) ** 2, 0) / ids.length);
   for (const rd of payload.rounds) {
     for (const ct of rd.courts) {
       if (ct.ga === "" || ct.gb === "" || ct.ga == null || ct.gb == null) continue;
