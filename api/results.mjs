@@ -33,16 +33,21 @@ export default async function handler(req, res) {
 
     let results = [];
     try { results = JSON.parse(latest.fields.Results || "[]"); } catch { results = []; }
+    // "e" (prize-eligible) was added to newer saved nights; older rows without it default to eligible.
     results = results
-      .map(r => ({ name: r.n, games: r.g }))
+      .map(r => ({ name: r.n, games: r.g, eligible: r.e !== false }))
       .sort((a, b) => b.games - a.games);
 
     if (!results.length) {
       return res.status(200).json({ ok: true, noResults: true, week: latest.fields.Week });
     }
 
-    const topGames = results[0].games;
-    const winnerNames = results.filter(r => r.games === topGames).map(r => r.name);
+    // Winner of the night is picked from prize-eligible players only (see coach page /
+    // Prize Eligible flag on Players) — an ineligible top scorer still appears in the
+    // ranking below, just not as the declared winner.
+    const eligibleResults = results.filter(r => r.eligible);
+    const topGames = eligibleResults.length ? eligibleResults[0].games : 0;
+    const winnerNames = eligibleResults.filter(r => r.games === topGames).map(r => r.name);
 
     res.status(200).json({
       ok: true,
@@ -50,6 +55,7 @@ export default async function handler(req, res) {
       date: latest.fields.Date || null,
       tiebreak: !!latest.fields.Tiebreak,
       winnerNames,
+      winnerGames: topGames,
       results,
     });
   } catch (e) {

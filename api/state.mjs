@@ -60,6 +60,7 @@ export default async function handler(req, res) {
       sigma: p.fields.Volatility ?? 0.06, active: !!p.fields.Active, played: p.fields.Played || 0,
       wins: p.fields.Wins || 0, draws: p.fields.Draws || 0, losses: p.fields.Losses || 0,
       gf: p.fields["Games For"] || 0, ga: p.fields["Games Against"] || 0, nightWins: p.fields["Night Wins"] || 0,
+      prizeEligible: p.fields["Prize Eligible"] !== false,
     }));
     const nights = sessions.map(s => ({
       id: s.id, week: s.fields.Week || 0, date: s.fields.Date || null,

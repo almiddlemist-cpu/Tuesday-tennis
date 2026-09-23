@@ -105,11 +105,17 @@ function computeNight(players, payload) {
   }
   const nightRows = Object.keys(tally).map(id => { const t = tally[id]; return { id, games: t.gf, diff: t.gf - t.ga }; })
     .sort((x, y) => y.games - x.games || y.diff - x.diff);
-  const top = nightRows[0];
+  // Prize winner is picked from eligible players only (e.g. a county-level player can be
+  // flagged "Prize Eligible = false" so they play and their games/rating still fully count,
+  // but they're skipped when crowning the night's winner). Full ranking below is unaffected.
+  const eligible = payload.eligible || {};
+  const isEligible = id => eligible[id] !== false;
+  const eligibleRows = nightRows.filter(r => isEligible(r.id));
+  const top = eligibleRows[0];
   const topGames = top ? top.games : 0;
-  const winnerIds = top ? nightRows.filter(r => r.games === topGames).map(r => r.id) : [];
+  const winnerIds = top ? eligibleRows.filter(r => r.games === topGames).map(r => r.id) : [];
   const isTie = winnerIds.length > 1;
-  const podium = nightRows.slice(0, 3);
+  const podium = eligibleRows.slice(0, 3);
   const updated = players.map(p => {
     const o = obs[p.id] || [];
     const t = tally[p.id] || { p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 };
@@ -136,13 +142,16 @@ export default async function handler(req, res) {
       name: p.fields.Name || "", played: p.fields.Played || 0, wins: p.fields.Wins || 0,
       draws: p.fields.Draws || 0, losses: p.fields.Losses || 0,
       gf: p.fields["Games For"] || 0, ga: p.fields["Games Against"] || 0, nightWins: p.fields["Night Wins"] || 0,
+      eligible: p.fields["Prize Eligible"] !== false,
     }));
     const nameById = {}; players.forEach(p => (nameById[p.id] = p.name));
-    const out = computeNight(players, { rounds, blend });
+    const eligible = {}; players.forEach(p => (eligible[p.id] = p.eligible));
+    const out = computeNight(players, { rounds, blend, eligible });
     const playedIds = out.updated.filter(p => p.played).map(p => p.id);
 
-    // compact games-won summary for the public results page (name + games only)
-    const resultsSummary = out.ranking.map(r => ({ n: nameById[r.id] || "\u2014", g: r.games }));
+    // compact games-won summary for the public results page (name + games only, plus a
+    // prize-eligibility flag so the results page can note when the top scorer isn't eligible)
+    const resultsSummary = out.ranking.map(r => ({ n: nameById[r.id] || "\u2014", g: r.games, e: eligible[r.id] !== false }));
 
     const [session] = await createRecords(TABLES.sessions, [{
       Label: `Week ${week}`, Date: date || undefined, Week: week,
