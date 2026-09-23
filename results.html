@@ -67,7 +67,9 @@ async function load(){
 
   document.getElementById('wk').textContent='Week '+data.week;
   const winners=data.winnerNames||[];
-  const topGames=data.results[0].games;
+  const winnerGames=data.winnerGames!=null?data.winnerGames:(data.results[0]?data.results[0].games:0);
+  const topOfList=data.results[0]?data.results[0].games:0;
+  const topScorerNotEligible=data.results[0]&&data.results[0].eligible===false&&topOfList>winnerGames;
   const fifth=data.results.length>=5?data.results[4].games:null;
   const shown=fifth===null?data.results:data.results.filter((r,i)=>i<5||r.games===fifth);
 
@@ -76,11 +78,15 @@ async function load(){
   html+='<div class="winner">'+trophy()+'<div>'
     +'<div class="lbl">'+(data.tiebreak?'Tiebreak — to be played off':'Winner of the night')+'</div>'
     +'<div class="nm">'+esc(winners.join(data.tiebreak?'  vs  ':' & '))+'</div>'
-    +'<div class="g">'+topGames+' games won</div></div></div>';
+    +'<div class="g">'+winnerGames+' games won</div></div></div>';
+  if(topScorerNotEligible){
+    html+='<div class="note" style="text-align:left;padding:10px 18px;margin:0;border-bottom:1px solid var(--line)">'
+      +esc(data.results[0].name)+' topped the games count but isn’t eligible for the prize.</div>';
+  }
   // table
   html+='<div class="row head"><span>#</span><span>Player</span><span class="g">Games</span></div>';
   shown.forEach((r,i)=>{
-    const isTop=r.games===topGames;
+    const isTop=r.eligible!==false&&r.games===winnerGames;
     html+='<div class="row'+(isTop?' top':'')+'">'
       +'<span class="rank'+(i===0?' one':'')+'">'+(i+1)+'</span>'
       +'<span class="nm">'+esc(r.name)+'</span>'
