@@ -142,7 +142,11 @@ export default async function handler(req, res) {
       name: p.fields.Name || "", played: p.fields.Played || 0, wins: p.fields.Wins || 0,
       draws: p.fields.Draws || 0, losses: p.fields.Losses || 0,
       gf: p.fields["Games For"] || 0, ga: p.fields["Games Against"] || 0, nightWins: p.fields["Night Wins"] || 0,
-      eligible: p.fields["Prize Eligible"] !== false,
+      // Airtable never returns an explicit `false` for an unchecked checkbox — the field is
+      // just omitted from the record, same as a field that was never touched. So this can only
+      // safely check for an explicit `true`; every eligible player (and every newly-added
+      // player, via api/roster.mjs) must have "Prize Eligible" explicitly ticked for this to work.
+      eligible: p.fields["Prize Eligible"] === true,
     }));
     const nameById = {}; players.forEach(p => (nameById[p.id] = p.name));
     const eligible = {}; players.forEach(p => (eligible[p.id] = p.eligible));

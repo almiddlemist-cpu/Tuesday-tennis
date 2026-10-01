@@ -62,6 +62,10 @@ export default async function handler(req, res) {
       const [rec] = await createRecords(TABLES.players, [{
         Name: name, Rating: 1500, RD: 350, Volatility: 0.06, Active: true,
         Played: 0, Wins: 0, Draws: 0, Losses: 0, "Games For": 0, "Games Against": 0, "Night Wins": 0,
+        // Must be explicitly true, not left blank: an unchecked/blank checkbox is
+        // indistinguishable from "false" once read back from Airtable, so a new player needs
+        // this set here or they'd silently never be eligible for the prize.
+        "Prize Eligible": true,
       }]);
       return res.status(200).json({ ok: true, id: rec.id });
     }
