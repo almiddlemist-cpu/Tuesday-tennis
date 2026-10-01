@@ -31,23 +31,23 @@ export default async function handler(req, res) {
     if (!withWeek.length) return res.status(200).json({ ok: true, noResults: true });
     const latest = withWeek.sort((a, b) => (b.fields.Week || 0) - (a.fields.Week || 0))[0];
 
-    let results = [];
-    try { results = JSON.parse(latest.fields.Results || "[]"); } catch { results = []; }
-    // "e" (prize-eligible) was added to newer saved nights; older rows without it default to eligible.
-    results = results
-      .map(r => ({ name: r.n, games: r.g, eligible: r.e !== false }))
+    let raw = [];
+    try { raw = JSON.parse(latest.fields.Results || "[]"); } catch { raw = []; }
+    // "e" marks a normal, publicly-shown player; an exception player (e:false, e.g. a
+    // county-level player — see "Exclude From Ladder" on Players) still played and still
+    // counts internally, but is left off this public page entirely, not just out of the
+    // winner pick. Older saved nights without "e" at all default to shown.
+    const results = raw
+      .filter(r => r.e !== false)
+      .map(r => ({ name: r.n, games: r.g }))
       .sort((a, b) => b.games - a.games);
 
     if (!results.length) {
       return res.status(200).json({ ok: true, noResults: true, week: latest.fields.Week });
     }
 
-    // Winner of the night is picked from prize-eligible players only (see coach page /
-    // Prize Eligible flag on Players) — an ineligible top scorer still appears in the
-    // ranking below, just not as the declared winner.
-    const eligibleResults = results.filter(r => r.eligible);
-    const topGames = eligibleResults.length ? eligibleResults[0].games : 0;
-    const winnerNames = eligibleResults.filter(r => r.games === topGames).map(r => r.name);
+    const topGames = results[0].games;
+    const winnerNames = results.filter(r => r.games === topGames).map(r => r.name);
 
     res.status(200).json({
       ok: true,
