@@ -74,8 +74,11 @@ async function load(){
   if(data.setup){ renderSetup(app); return; }
   if(!data.ok){ app.innerHTML='<div class="banner">Error: '+esc(data.error||'unknown')+'</div>'; return; }
 
-  const players=data.players.filter(p=>p.active||p.played>0).sort((a,b)=>b.r-a.r);
-  document.getElementById('sub').textContent='Week '+data.week+' · '+data.players.filter(p=>p.active).length+' players';
+  // an exception player (publicLadder===false) is kept fully in the system — they play, their
+  // games/rating count, the coach still sees them — but is left off this public ladder
+  const visible=p=>p.publicLadder!==false;
+  const players=data.players.filter(p=>(p.active||p.played>0)&&visible(p)).sort((a,b)=>b.r-a.r);
+  document.getElementById('sub').textContent='Week '+data.week+' · '+data.players.filter(p=>p.active&&visible(p)).length+' players';
 
   const unresolved=(data.nights||[]).filter(n=>n.tiebreak);
   let html='';
