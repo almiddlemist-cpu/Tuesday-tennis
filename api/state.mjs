@@ -60,9 +60,9 @@ export default async function handler(req, res) {
       sigma: p.fields.Volatility ?? 0.06, active: !!p.fields.Active, played: p.fields.Played || 0,
       wins: p.fields.Wins || 0, draws: p.fields.Draws || 0, losses: p.fields.Losses || 0,
       gf: p.fields["Games For"] || 0, ga: p.fields["Games Against"] || 0, nightWins: p.fields["Night Wins"] || 0,
-      // see api/save-night.mjs: Airtable omits an unchecked checkbox entirely on read, so
-      // this must check for an explicit `true`, not merely "not false".
-      prizeEligible: p.fields["Prize Eligible"] === true,
+      // see api/save-night.mjs: ticked = exception player, left off the public ladder/results
+      // (but still a full player everywhere else, including this coach-facing endpoint).
+      publicLadder: p.fields["Exclude From Ladder"] !== true,
     }));
     const nights = sessions.map(s => ({
       id: s.id, week: s.fields.Week || 0, date: s.fields.Date || null,

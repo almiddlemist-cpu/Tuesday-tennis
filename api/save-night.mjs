@@ -142,19 +142,20 @@ export default async function handler(req, res) {
       name: p.fields.Name || "", played: p.fields.Played || 0, wins: p.fields.Wins || 0,
       draws: p.fields.Draws || 0, losses: p.fields.Losses || 0,
       gf: p.fields["Games For"] || 0, ga: p.fields["Games Against"] || 0, nightWins: p.fields["Night Wins"] || 0,
-      // Airtable never returns an explicit `false` for an unchecked checkbox — the field is
-      // just omitted from the record, same as a field that was never touched. So this can only
-      // safely check for an explicit `true`; every eligible player (and every newly-added
-      // player, via api/roster.mjs) must have "Prize Eligible" explicitly ticked for this to work.
-      eligible: p.fields["Prize Eligible"] === true,
+      // "Exclude From Ladder" is ticked only for an exception player (e.g. a county-level
+      // player): unticked is the default for everyone, including every new player, so this
+      // never needs touching when someone's added. Ticked means: still a full player (games
+      // and rating fully count), just left off the public ladder/results and never the
+      // declared prize winner.
+      eligible: p.fields["Exclude From Ladder"] !== true,
     }));
     const nameById = {}; players.forEach(p => (nameById[p.id] = p.name));
     const eligible = {}; players.forEach(p => (eligible[p.id] = p.eligible));
     const out = computeNight(players, { rounds, blend, eligible });
     const playedIds = out.updated.filter(p => p.played).map(p => p.id);
 
-    // compact games-won summary for the public results page (name + games only, plus a
-    // prize-eligibility flag so the results page can note when the top scorer isn't eligible)
+    // compact games-won summary for the public results page (name + games only, plus whether
+    // this player should appear publicly at all \u2014 see "Exclude From Ladder" above)
     const resultsSummary = out.ranking.map(r => ({ n: nameById[r.id] || "\u2014", g: r.games, e: eligible[r.id] !== false }));
 
     const [session] = await createRecords(TABLES.sessions, [{
